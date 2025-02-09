@@ -77,7 +77,13 @@ app.put("/update-status/:id", (req, res) => {
     });
 });
 
+// Default Route for Testing
+app.get("/", (req, res) => {
+    res.send("Welcome to the Complaint Management System API!");
+});
+
 // Start server
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
