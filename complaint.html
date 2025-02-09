@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Complaint Management System</title>
+</head>
+<body>
+    <h1>Complaint Management System</h1>
+    <form id="complaintForm">
+        <input type="text" id="firstname" placeholder="First Name" required><br>
+        <input type="text" id="lastname" placeholder="Last Name"><br>
+        <input type="text" id="number" placeholder="Mobile Number"><br>
+        <input type="text" id="email" placeholder="Your Email"><br>
+        <input type="text" id="city" placeholder="Your City"><br>
+        <input type="text" id="message" placeholder="Your Complaint"><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById("complaintForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let complaint = {
+                firstname: document.getElementById("firstname").value,
+                lastname: document.getElementById("lastname").value,
+                number: document.getElementById("number").value,
+                email: document.getElementById("email").value,
+                city: document.getElementById("city").value,
+                message: document.getElementById("message").value
+            };
+
+            fetch("http://localhost:5000/submit-complaint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(complaint)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = "complaint_records.html";
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>

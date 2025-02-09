@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Records</title>
+</head>
+<body>
+    <h1>Complaint Records</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile Number</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Complaint</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="complaintTable"></tbody>
+    </table>
+
+    <script>
+        function loadComplaints() {
+            fetch("http://localhost:5000/get-complaints")
+            .then(response => response.json())
+            .then(complaints => {
+                let tableBody = document.getElementById("complaintTable");
+                tableBody.innerHTML = "";
+
+                complaints.forEach(complaint => {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${complaint.id}</td>
+                        <td>${complaint.firstname}</td>
+                        <td>${complaint.lastname}</td>
+                        <td>${complaint.number}</td>
+                        <td>${complaint.email}</td>
+                        <td>${complaint.city}</td>
+                        <td>${complaint.message}</td>
+                        <td>${new Date(complaint.date).toLocaleString()}</td>
+                        <td>
+                            <button onclick="toggleStatus(${complaint.id}, '${complaint.status}')">${complaint.status}</button>
+                        </td>
+                        <td>
+                            <button onclick="deleteComplaint(${complaint.id})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            });
+        }
+
+        function deleteComplaint(id) {
+            fetch(`http://localhost:5000/delete-complaint/${id}`, { method: "DELETE" })
+            .then(() => loadComplaints());
+        }
+
+        function toggleStatus(id, currentStatus) {
+            let newStatus = currentStatus === "Completed" ? "Pending" : "Completed";
+            fetch(`http://localhost:5000/update-status/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus })
+            }).then(() => loadComplaints());
+        }
+
+        window.onload = loadComplaints;
+    </script>
+</body>
+</html>
